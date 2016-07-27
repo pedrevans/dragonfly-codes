@@ -41,10 +41,14 @@ jQuery(document).ready(function ($) {
         } );
         data.codes = values;
         console.log("#dragonfly-evaluate-button.on POST = "+JSON.stringify(data));
-        if (data.participant_email == undefined || data.participant_email == '')
+        if (data.participant_email == undefined || data.participant_email == '') {
+            alert($(this).data('nomail'));
             return;
-        if (count == 0)
+        }
+        if (count == 0) {
+            alert($(this).data('nocodes'));
             return;
+        }
         dragonfly_codes_post(data, function (response) {
             console.log('dragonfly_codes_post callback response: '+JSON.stringify(response));
             var output = '';

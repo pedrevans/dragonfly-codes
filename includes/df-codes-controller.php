@@ -167,7 +167,7 @@ class DfCodesController {
                 <div id="dragonfly-code-fields-div" class="dragonfly-code-fields-div">'.
                     $this->code_fields_html($options['max_codes']).'
                 </div>
-                <button id="dragonfly-evaluate-button" class="dragonfly-button" type="button" data-postid="'.$page_id.'" data-nonce="'.$nonce.'">'.
+                <button id="dragonfly-evaluate-button" class="dragonfly-button" type="button" data-postid="'.$page_id.'" data-nonce="'.$nonce.'" data-nocodes="'.__('You have to enter some codes').'" data-nomail="'.__('Invalid email address').'">'.
                     __('Send codes now').
                 '</button>
             </div>

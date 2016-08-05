@@ -28,7 +28,8 @@ jQuery(document).ready(function ($) {
             action : 'dragonfly_evaluate',
             nonce : $(this).data('nonce'),
             postid : $(this).data('postid'),
-            participant_email: $('#dragonfly-input-participant-email').val()
+            participant_email: $('#dragonfly-input-participant-email').val(),
+            participant_realname: $('#dragonfly-input-participant-realname').val()
         };
         var values = [];
         var count = 0;
@@ -43,6 +44,10 @@ jQuery(document).ready(function ($) {
         console.log("#dragonfly-evaluate-button.on POST = "+JSON.stringify(data));
         if (data.participant_email == undefined || data.participant_email == '') {
             alert($(this).data('nomail'));
+            return;
+        }
+        if (data.participant_realname == undefined || data.participant_realname == '') {
+            alert($(this).data('norealname'));
             return;
         }
         if (count == 0) {

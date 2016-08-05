@@ -12,22 +12,31 @@ class DfCodesController {
     var $version = '1.0';
 
     static function send_win_mail_to_admin($post_id, $participant) {
+        $email = $participant['email'];
+        $real_name = $participant['realname'];
         $admin = get_post_meta($post_id, 'dragonfly_mail_to', true);
-        error_log('Mailing: to: '. $admin, 'subject: [dragonfly-winner] postid: '.$post_id.' '.$participant, 'message: '.$participant.__(' got all the codes right for postid '.$post_id));
-        mail($admin, '[dragonfly-winner] postid: '.$post_id.' participant: '.$participant, $participant.__(' got all the codes right for postid '.$post_id));
+        $post = get_post( $post_id );
+        $slug = $post->post_name;
+        error_log('Mailing: to: '. $admin . ' subject: [dragonfly-winner] postid: '.$post_id.' '.$email. ' message: '.$email.__(' got all the codes right for postid '.$post_id));
+        mail($admin, '[dragonfly-winner] postid: '.$post_id.' '.
+            __('postname').': '. $slug. ' '.
+            __('participant').': '.$real_name. ' <' .$email. '>',
+            $real_name. ' <' .$email. '>' .__(' got all the codes right for postid '.$post_id).' '.__('postname ').$slug);
     }
     static function do_evaluate_codes($post_data) {
+        error_log('do_evaluate_codes post_data: '.print_r($post_data,true));
         $codeList = $post_data['codes'];
         sort($codeList);
         $post_id = $post_data['postid'];
-        $participant = $post_data['participant_email'];
+        $participant = array(
+            'email' =>  $post_data['participant_email'],
+            'realname' => $post_data['participant_realname']
+        );
         error_log('do_evaluate_codes '.print_r($codeList, true));
         $message = __('You got all codes right!');
         $winners = self::get_winning_codes($post_id);
-        $winnersHash = crypt($winners, DRAGONFLY_SALT);
         $received = implode(' ', $codeList);
-        $receivedHash = crypt($received, DRAGONFLY_SALT);
-        $is_winner =  $receivedHash == $winnersHash;
+        $is_winner =  $received == $winners;
         $status['winner'] = $is_winner;
         if (!$is_winner) {
             $message = __('You did not have all the winning codes.');
@@ -160,14 +169,23 @@ class DfCodesController {
             <div id="dragonfly-codes-form-div">
                 <div class="dragonfly-evaluate-button-div">
                 </div>
-                <div id="dragonfly-email-div" class="dragonfly-email-div">
+                <div id="dragonfly-email-div" class="dragonfly-email-div dragonfly-info-div">
                     <div class="dragonfly-label">'.__('Your Email Address: ').'</div>
-                    <input id="dragonfly-input-participant-email" class="dragonfly-input-email" type="email" name="dragonfly-input-participant-email" placeholder="'.__('Your Email Address').'">
+                    <input id="dragonfly-input-participant-email" class="dragonfly-input dragonfly-input-email" type="email" name="dragonfly-input-participant-email" placeholder="'.__('Your Email Address').'">
+                </div>
+                <div id="dragonfly-realname-div" class="dragonfly-realname-div dragonfly-info-div">
+                    <div class="dragonfly-label">'.__('Your Name: ').'</div>
+                    <input id="dragonfly-input-participant-realname" class="dragonfly-input dragonfly-input-realname" type="text" name="dragonfly-input-participant-realname" placeholder="'.__('Your Name').'">
                 </div>
                 <div id="dragonfly-code-fields-div" class="dragonfly-code-fields-div">'.
                     $this->code_fields_html($options['max_codes']).'
                 </div>
-                <button id="dragonfly-evaluate-button" class="dragonfly-button" type="button" data-postid="'.$page_id.'" data-nonce="'.$nonce.'" data-nocodes="'.__('You have to enter some codes').'" data-nomail="'.__('Invalid email address').'">'.
+                <button id="dragonfly-evaluate-button" class="dragonfly-button" type="button" data-postid="'.$page_id.
+                    '" data-nonce="'.$nonce.
+                    '" data-nocodes="'.__('You have to enter some codes').
+                    '" data-nomail="'.__('Invalid email address').
+                    '" data-norealname="'.__('Don\'t forget to enter your name').
+                '">'.
                     __('Send codes now').
                 '</button>
             </div>

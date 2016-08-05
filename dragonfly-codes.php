@@ -17,8 +17,8 @@ License: all rights reserved
 */
 
 /* Dragonfly stuff */
-define(DRAGONFLY_SALT, 'Gareth Bale is a Deity');
-define(DRAGONFLY_CODE_MAX, 7);
+define('DRAGONFLY_SALT', 'Gareth Bale is a Deity');
+define('DRAGONFLY_CODE_MAX', 7);
 
 require_once( 'includes/df-codes-controller.php' );
 
